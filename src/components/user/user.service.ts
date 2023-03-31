@@ -1,4 +1,4 @@
-import { myDataSource } from "../../app-data-source";
+import { myDataSource } from "../../../app-data-source";
 import { User } from "../../entity/user.entity";
 
 const findById = async (id: string) => {

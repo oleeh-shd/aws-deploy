@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import dotenv from "dotenv";
 import { initializeServer } from "./app";
-import { myDataSource } from "./app-data-source";
+import { myDataSource } from "../app-data-source";
 
 myDataSource
     .initialize()
