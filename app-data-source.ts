@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 import { User } from "./src/entity/user.entity";
+import { Image } from "./src/entity/image.entity";
 
 export const myDataSource = new DataSource({
     type: "postgres",
@@ -8,6 +9,9 @@ export const myDataSource = new DataSource({
     username: "postgres",
     password: "postgres",
     database: "aws-deploy",
-    entities: [User],
+    // use this for dev mode
+    // entities: [User, Image],
+    // use this for prod mode
+    entities: [__dirname + "/../**/*.entity.{js,ts}"],
     synchronize: true,
 });
