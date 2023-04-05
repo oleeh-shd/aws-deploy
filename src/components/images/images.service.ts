@@ -1,14 +1,16 @@
 import { Response } from "express";
-import AWS from "aws-sdk";
 import crypto from "crypto";
 import { myDataSource } from "../../../app-data-source";
 import { Image } from "../../entity/image.entity";
+import {
+    S3Client,
+    PutObjectCommand,
+    GetObjectCommand,
+    DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
+import { Readable } from "node:stream";
 
-const s3 = new AWS.S3();
-
-AWS.config.update({
-    region: process.env.AWS_REGION,
-});
+const client = new S3Client({ region: process.env.AWS_REGION });
 
 const generateFileName = (bytes = 16) =>
     crypto.randomBytes(bytes).toString("hex");
@@ -30,7 +32,9 @@ export const upload = async (imageData: Buffer, res: Response) => {
         Body: imageData,
     };
 
-    s3.putObject(params, async (err, data) => {
+    const command = new PutObjectCommand(params);
+
+    client.send(command, async (err, data) => {
         if (err) {
             throw err;
         } else {
@@ -52,8 +56,12 @@ export const findImageById = async (id: string, res: Response) => {
         Key: image.imgName,
     };
 
+    const command = new GetObjectCommand(params);
+
     try {
-        s3.getObject(params).createReadStream().pipe(res);
+        const image = await client.send(command);
+
+        (image.Body as Readable)?.pipe(res);
     } catch (err) {
         throw err;
     }
@@ -71,8 +79,10 @@ export const removeImageById = async (id: string) => {
         Key: image.imgName,
     };
 
+    const command = new DeleteObjectCommand(params);
+
     try {
-        s3.deleteObject(params).promise();
+        await client.send(command);
     } catch (err) {
         throw err;
     }
