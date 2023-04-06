@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "build": "npx tsc",
-        "start": "pm2 start dist/index.js",
+        "start": "pm2 start dist/src/index.js",
         "dev": "nodemon -q src/index.ts",
         "test": "echo \"Error: no test specified\" && exit 1",
         "prestart": "npm run build"
